@@ -12,6 +12,7 @@ A listák megjelenítésére RecyclerView, az adatok tárolására Room adatbáz
 
 ## Fő funkciók
 
+-firebase firestore
 - városi legendák listázása
 - legenda részletes megjelenítése
 - új legenda létrehozása
