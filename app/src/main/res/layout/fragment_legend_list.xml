@@ -1,37 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#000000"
+    android:padding="20dp"
+    tools:context=".fragments.LegendListFragment">
+
+    <TextView
+        android:id="@+id/textArchive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ARCHIVE"
+        android:textColor="#7A7A7A"
+        android:textSize="14sp"
+        android:letterSpacing="0.15"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Urban Legends"
+        android:textColor="#FFFFFF"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp" />
 
     <EditText
         android:id="@+id/editSearch"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginBottom="16dp"
+        android:background="#111111"
+        android:hint="SEARCH ARCHIVE..."
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#6E6E6E" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Keresés..."
-        android:padding="12dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="12dp"/>
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/buttonSortAZ"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:backgroundTint="#F2F2F2"
+            android:text="A-Z"
+            android:textColor="#000000"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/buttonSortCategory"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="#111111"
+            android:text="CATEGORY"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/buttonSortRecent"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="#111111"
+            android:text="RECENT"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewLegends"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/editSearch"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:layout_weight="1"
+        tools:listitem="@layout/item_legend" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_input_add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp"/>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -1,67 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#000000">
 
-    <ScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnSave"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <EditText
-                android:id="@+id/editTitle"
-                android:hint="Cím"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <EditText
-                android:id="@+id/editLocation"
-                android:hint="Helyszín"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"/>
-
-            <EditText
-                android:id="@+id/editDescription"
-                android:hint="Leírás"
-                android:inputType="textMultiLine"
-                android:minLines="5"
-                android:gravity="top"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"/>
-
-            <EditText
-                android:id="@+id/editImageUrl"
-                android:hint="Kép URL"
-                android:inputType="textUri"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"/>
-
-        </LinearLayout>
-    </ScrollView>
-
-    <Button
-        android:id="@+id/btnSave"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Mentés"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp"/>
+        android:orientation="vertical"
+        android:padding="20dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EDIT LEGEND"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="20dp" />
+
+        <EditText
+            android:id="@+id/editTitle"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="12dp"
+            android:background="#111111"
+            android:hint="Title"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#7A7A7A" />
+
+        <EditText
+            android:id="@+id/editCategory"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="12dp"
+            android:background="#111111"
+            android:hint="Category"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#7A7A7A" />
+
+        <EditText
+            android:id="@+id/editLocation"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="12dp"
+            android:background="#111111"
+            android:hint="Location"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#7A7A7A" />
+
+        <EditText
+            android:id="@+id/editImageUrl"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="12dp"
+            android:background="#111111"
+            android:hint="Image URL"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#7A7A7A" />
+
+        <EditText
+            android:id="@+id/editDescription"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:layout_marginBottom="18dp"
+            android:background="#111111"
+            android:gravity="top|start"
+            android:hint="Description"
+            android:padding="16dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#7A7A7A" />
+
+        <Button
+            android:id="@+id/buttonSaveLegend"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="SAVE LEGEND"
+            android:textColor="#000000"
+            android:backgroundTint="#F2F2F2" />
+
+    </LinearLayout>
+</ScrollView>
