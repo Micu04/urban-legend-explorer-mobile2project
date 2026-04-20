@@ -1,4 +1,4 @@
-package com.example.urbanlegendexplorer.models;
+package com.example.urbanlegendexplorer.model;
 
 public class Legend {
     private String id;

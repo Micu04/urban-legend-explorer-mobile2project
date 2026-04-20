@@ -2,8 +2,10 @@ package com.example.urbanlegendexplorer;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+
 import com.example.urbanlegendexplorer.fragments.LegendListFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -13,10 +15,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        loadFragment(new LegendListFragment());
+        if (savedInstanceState == null) {
+            loadRootFragment(new LegendListFragment());
+        }
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                    getSupportFragmentManager().popBackStack();
+                } else {
+                    finish();
+                }
+            }
+        });
     }
 
-    public void loadFragment(Fragment fragment) {
+    public void loadRootFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, fragment)

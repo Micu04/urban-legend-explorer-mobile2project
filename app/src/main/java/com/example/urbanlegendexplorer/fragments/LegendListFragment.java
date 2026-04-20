@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.urbanlegendexplorer.R;
 import com.example.urbanlegendexplorer.adapter.LegendAdapter;
-import com.example.urbanlegendexplorer.models.Legend;
+import com.example.urbanlegendexplorer.model.Legend;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,6 +27,7 @@ public class LegendListFragment extends Fragment {
 
     private RecyclerView recyclerViewLegends;
     private EditText editSearch;
+    private Button buttonAddLegend;
     private Button buttonSortAZ;
     private Button buttonSortCategory;
     private Button buttonSortRecent;
@@ -49,6 +50,7 @@ public class LegendListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         recyclerViewLegends = view.findViewById(R.id.recyclerViewLegends);
         editSearch = view.findViewById(R.id.editSearch);
+        buttonAddLegend = view.findViewById(R.id.buttonAddLegend);
         buttonSortAZ = view.findViewById(R.id.buttonSortAZ);
         buttonSortCategory = view.findViewById(R.id.buttonSortCategory);
         buttonSortRecent = view.findViewById(R.id.buttonSortRecent);
@@ -78,6 +80,16 @@ public class LegendListFragment extends Fragment {
         loadDummyData();
         applyFilter("");
 
+        buttonAddLegend.setOnClickListener(v -> {
+            AddEditLegendFragment fragment = new AddEditLegendFragment();
+
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+
         editSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -94,12 +106,12 @@ public class LegendListFragment extends Fragment {
         });
 
         buttonSortAZ.setOnClickListener(v -> {
-            filteredLegends.sort(Comparator.comparing(Legend::getTitle));
+            filteredLegends.sort(Comparator.comparing(Legend::getTitle, String.CASE_INSENSITIVE_ORDER));
             adapter.notifyDataSetChanged();
         });
 
         buttonSortCategory.setOnClickListener(v -> {
-            filteredLegends.sort(Comparator.comparing(Legend::getCategory));
+            filteredLegends.sort(Comparator.comparing(Legend::getCategory, String.CASE_INSENSITIVE_ORDER));
             adapter.notifyDataSetChanged();
         });
 

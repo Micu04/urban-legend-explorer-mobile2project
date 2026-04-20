@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.urbanlegendexplorer.R;
-import com.example.urbanlegendexplorer.models.Legend;
+import com.example.urbanlegendexplorer.model.Legend;
 
 import java.util.List;
 

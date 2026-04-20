@@ -10,6 +10,16 @@
         android:orientation="vertical"
         android:padding="20dp">
 
+        <ImageButton
+            android:id="@+id/buttonBackDetail"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="16dp"
+            android:background="#111111"
+            android:contentDescription="Back"
+            android:src="@android:drawable/ic_media_previous"
+            android:tint="#FFFFFF" />
+
         <ImageView
             android:id="@+id/imageLegendDetail"
             android:layout_width="match_parent"
@@ -67,18 +77,18 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="30dp"
+            android:backgroundTint="#F2F2F2"
             android:text="EDIT LEGEND"
-            android:textColor="#000000"
-            android:backgroundTint="#F2F2F2" />
+            android:textColor="#000000" />
 
         <Button
             android:id="@+id/buttonDelete"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="12dp"
+            android:backgroundTint="#1A1A1A"
             android:text="DELETE LEGEND"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#1A1A1A" />
+            android:textColor="#FFFFFF" />
 
     </LinearLayout>
 </ScrollView>

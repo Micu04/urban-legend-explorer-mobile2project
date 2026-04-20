@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,12 +19,16 @@ import com.example.urbanlegendexplorer.R;
 
 public class AddEditLegendFragment extends Fragment {
 
+    private ImageButton buttonBack;
+    private TextView textScreenTitle;
     private EditText editTitle;
     private EditText editCategory;
     private EditText editLocation;
     private EditText editImageUrl;
     private EditText editDescription;
     private Button buttonSaveLegend;
+
+    private boolean isEditMode = false;
 
     public AddEditLegendFragment() {
     }
@@ -36,6 +42,8 @@ public class AddEditLegendFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        buttonBack = view.findViewById(R.id.buttonBackAddEdit);
+        textScreenTitle = view.findViewById(R.id.textScreenTitle);
         editTitle = view.findViewById(R.id.editTitle);
         editCategory = view.findViewById(R.id.editCategory);
         editLocation = view.findViewById(R.id.editLocation);
@@ -43,13 +51,25 @@ public class AddEditLegendFragment extends Fragment {
         editDescription = view.findViewById(R.id.editDescription);
         buttonSaveLegend = view.findViewById(R.id.buttonSaveLegend);
 
+        buttonBack.setOnClickListener(v ->
+                requireActivity().getOnBackPressedDispatcher().onBackPressed()
+        );
+
         Bundle args = getArguments();
-        if (args != null) {
+        if (args != null && !args.isEmpty()) {
+            isEditMode = true;
+
             editTitle.setText(args.getString("title", ""));
             editCategory.setText(args.getString("category", ""));
             editLocation.setText(args.getString("location", ""));
             editImageUrl.setText(args.getString("imageUrl", ""));
             editDescription.setText(args.getString("description", ""));
+
+            textScreenTitle.setText("EDIT LEGEND");
+            buttonSaveLegend.setText("UPDATE LEGEND");
+        } else {
+            textScreenTitle.setText("ADD LEGEND");
+            buttonSaveLegend.setText("SAVE LEGEND");
         }
 
         buttonSaveLegend.setOnClickListener(v -> saveLegend());
@@ -67,6 +87,20 @@ public class AddEditLegendFragment extends Fragment {
             return;
         }
 
-        Toast.makeText(requireContext(), "Save will be connected to Firestore next", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(category)) {
+            category = "UNKNOWN";
+        }
+
+        if (TextUtils.isEmpty(location)) {
+            location = "UNKNOWN LOCATION";
+        }
+
+        if (isEditMode) {
+            Toast.makeText(requireContext(), "Legend updated locally", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(requireContext(), "Legend saved locally", Toast.LENGTH_SHORT).show();
+        }
+
+        requireActivity().getOnBackPressedDispatcher().onBackPressed();
     }
 }

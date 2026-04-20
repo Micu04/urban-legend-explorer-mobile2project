@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#000000"
+    android:orientation="vertical"
     android:padding="20dp"
     tools:context=".fragments.LegendListFragment">
 
@@ -12,21 +12,31 @@
         android:id="@+id/textArchive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:letterSpacing="0.15"
         android:text="ARCHIVE"
         android:textColor="#7A7A7A"
-        android:textSize="14sp"
-        android:letterSpacing="0.15"
-        android:layout_marginBottom="8dp" />
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/textTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:text="Urban Legends"
         android:textColor="#FFFFFF"
         android:textSize="32sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="20dp" />
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/buttonAddLegend"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#F2F2F2"
+        android:text="ADD LEGEND"
+        android:textColor="#000000"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/editSearch"

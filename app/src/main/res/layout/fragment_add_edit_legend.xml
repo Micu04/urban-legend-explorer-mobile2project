@@ -10,14 +10,25 @@
         android:orientation="vertical"
         android:padding="20dp">
 
+        <ImageButton
+            android:id="@+id/buttonBackAddEdit"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="16dp"
+            android:background="#111111"
+            android:contentDescription="Back"
+            android:src="@android:drawable/ic_media_previous"
+            android:tint="#FFFFFF" />
+
         <TextView
+            android:id="@+id/textScreenTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
             android:text="EDIT LEGEND"
             android:textColor="#FFFFFF"
             android:textSize="28sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="20dp" />
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/editTitle"
@@ -83,9 +94,9 @@
             android:id="@+id/buttonSaveLegend"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:backgroundTint="#F2F2F2"
             android:text="SAVE LEGEND"
-            android:textColor="#000000"
-            android:backgroundTint="#F2F2F2" />
+            android:textColor="#000000" />
 
     </LinearLayout>
 </ScrollView>

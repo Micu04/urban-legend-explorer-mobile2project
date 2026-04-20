@@ -6,8 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +20,7 @@ import com.example.urbanlegendexplorer.R;
 
 public class LegendDetailFragment extends Fragment {
 
+    private ImageButton buttonBack;
     private ImageView imageLegendDetail;
     private TextView textDetailCategory;
     private TextView textDetailTitle;
@@ -40,6 +43,7 @@ public class LegendDetailFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        buttonBack = view.findViewById(R.id.buttonBackDetail);
         imageLegendDetail = view.findViewById(R.id.imageLegendDetail);
         textDetailCategory = view.findViewById(R.id.textDetailCategory);
         textDetailTitle = view.findViewById(R.id.textDetailTitle);
@@ -47,6 +51,10 @@ public class LegendDetailFragment extends Fragment {
         textDetailDescription = view.findViewById(R.id.textDetailDescription);
         buttonEdit = view.findViewById(R.id.buttonEdit);
         buttonDelete = view.findViewById(R.id.buttonDelete);
+
+        buttonBack.setOnClickListener(v ->
+                requireActivity().getOnBackPressedDispatcher().onBackPressed()
+        );
 
         Bundle args = getArguments();
         if (args != null) {
@@ -90,7 +98,8 @@ public class LegendDetailFragment extends Fragment {
         });
 
         buttonDelete.setOnClickListener(v -> {
-            // később ide jön a firestore törlés
+            Toast.makeText(requireContext(), "Legend deleted locally", Toast.LENGTH_SHORT).show();
+            requireActivity().getOnBackPressedDispatcher().onBackPressed();
         });
     }
 }
