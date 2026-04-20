@@ -1,5 +1,7 @@
 package com.example.urbanlegendexplorer.fragments;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -35,6 +37,14 @@ public class LegendListFragment extends Fragment {
     private LegendAdapter adapter;
     private final List<Legend> allLegends = new ArrayList<>();
     private final List<Legend> filteredLegends = new ArrayList<>();
+
+    private enum SortMode {
+        AZ,
+        CATEGORY,
+        RECENT
+    }
+
+    private SortMode currentSortMode = SortMode.RECENT;
 
     public LegendListFragment() {
     }
@@ -79,6 +89,7 @@ public class LegendListFragment extends Fragment {
 
         loadDummyData();
         applyFilter("");
+        updateSortButtons();
 
         buttonAddLegend.setOnClickListener(v -> {
             AddEditLegendFragment fragment = new AddEditLegendFragment();
@@ -106,18 +117,21 @@ public class LegendListFragment extends Fragment {
         });
 
         buttonSortAZ.setOnClickListener(v -> {
-            filteredLegends.sort(Comparator.comparing(Legend::getTitle, String.CASE_INSENSITIVE_ORDER));
-            adapter.notifyDataSetChanged();
+            currentSortMode = SortMode.AZ;
+            sortCurrentList();
+            updateSortButtons();
         });
 
         buttonSortCategory.setOnClickListener(v -> {
-            filteredLegends.sort(Comparator.comparing(Legend::getCategory, String.CASE_INSENSITIVE_ORDER));
-            adapter.notifyDataSetChanged();
+            currentSortMode = SortMode.CATEGORY;
+            sortCurrentList();
+            updateSortButtons();
         });
 
         buttonSortRecent.setOnClickListener(v -> {
-            filteredLegends.sort((a, b) -> Long.compare(b.getCreatedAt(), a.getCreatedAt()));
-            adapter.notifyDataSetChanged();
+            currentSortMode = SortMode.RECENT;
+            sortCurrentList();
+            updateSortButtons();
         });
     }
 
@@ -168,6 +182,40 @@ public class LegendListFragment extends Fragment {
             }
         }
 
+        sortCurrentList();
+    }
+
+    private void sortCurrentList() {
+        switch (currentSortMode) {
+            case AZ:
+                filteredLegends.sort(Comparator.comparing(Legend::getTitle, String.CASE_INSENSITIVE_ORDER));
+                break;
+
+            case CATEGORY:
+                filteredLegends.sort(Comparator.comparing(Legend::getCategory, String.CASE_INSENSITIVE_ORDER));
+                break;
+
+            case RECENT:
+                filteredLegends.sort((a, b) -> Long.compare(b.getCreatedAt(), a.getCreatedAt()));
+                break;
+        }
+
         adapter.notifyDataSetChanged();
+    }
+
+    private void updateSortButtons() {
+        setButtonSelectedStyle(buttonSortAZ, currentSortMode == SortMode.AZ);
+        setButtonSelectedStyle(buttonSortCategory, currentSortMode == SortMode.CATEGORY);
+        setButtonSelectedStyle(buttonSortRecent, currentSortMode == SortMode.RECENT);
+    }
+
+    private void setButtonSelectedStyle(Button button, boolean isSelected) {
+        if (isSelected) {
+            button.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F2F2F2")));
+            button.setTextColor(Color.parseColor("#000000"));
+        } else {
+            button.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#111111")));
+            button.setTextColor(Color.parseColor("#FFFFFF"));
+        }
     }
 }
