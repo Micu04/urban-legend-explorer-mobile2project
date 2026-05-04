@@ -14,12 +14,15 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.urbanlegendexplorer.R;
 import com.example.urbanlegendexplorer.adapter.LegendAdapter;
 import com.example.urbanlegendexplorer.model.Legend;
+import com.example.urbanlegendexplorer.viewmodel.LegendViewModel;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -35,6 +38,8 @@ public class LegendListFragment extends Fragment {
     private Button buttonSortRecent;
 
     private LegendAdapter adapter;
+    private LegendViewModel legendViewModel;
+
     private final List<Legend> allLegends = new ArrayList<>();
     private final List<Legend> filteredLegends = new ArrayList<>();
 
@@ -45,6 +50,7 @@ public class LegendListFragment extends Fragment {
     }
 
     private SortMode currentSortMode = SortMode.RECENT;
+    private String currentSearchQuery = "";
 
     public LegendListFragment() {
     }
@@ -69,37 +75,37 @@ public class LegendListFragment extends Fragment {
 
         adapter = new LegendAdapter(filteredLegends, legend -> {
             Bundle bundle = new Bundle();
+
+            bundle.putString("legendId", legend.getId());
             bundle.putString("title", legend.getTitle());
             bundle.putString("category", legend.getCategory());
             bundle.putString("location", legend.getLocation());
             bundle.putString("description", legend.getDescription());
             bundle.putString("imageUrl", legend.getImageUrl());
+            bundle.putLong("createdAt", legend.getCreatedAt());
 
-            LegendDetailFragment detailFragment = new LegendDetailFragment();
-            detailFragment.setArguments(bundle);
-
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, detailFragment)
-                    .addToBackStack(null)
-                    .commit();
+            Navigation.findNavController(view)
+                    .navigate(R.id.action_legendListFragment_to_legendDetailFragment, bundle);
         });
 
         recyclerViewLegends.setAdapter(adapter);
 
-        loadDummyData();
-        applyFilter("");
-        updateSortButtons();
+        legendViewModel = new ViewModelProvider(this).get(LegendViewModel.class);
 
-        buttonAddLegend.setOnClickListener(v -> {
-            AddEditLegendFragment fragment = new AddEditLegendFragment();
+        legendViewModel.getAllLegends().observe(getViewLifecycleOwner(), legends -> {
+            allLegends.clear();
 
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .addToBackStack(null)
-                    .commit();
+            if (legends != null) {
+                allLegends.addAll(legends);
+            }
+
+            applyFilter(currentSearchQuery);
         });
+
+        buttonAddLegend.setOnClickListener(v ->
+                Navigation.findNavController(view)
+                        .navigate(R.id.action_legendListFragment_to_addEditLegendFragment)
+        );
 
         editSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -108,7 +114,8 @@ public class LegendListFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                applyFilter(s.toString());
+                currentSearchQuery = s.toString();
+                applyFilter(currentSearchQuery);
             }
 
             @Override
@@ -133,40 +140,8 @@ public class LegendListFragment extends Fragment {
             sortCurrentList();
             updateSortButtons();
         });
-    }
 
-    private void loadDummyData() {
-        allLegends.clear();
-
-        allLegends.add(new Legend(
-                "1",
-                "The Black-Eyed Children",
-                "MYSTERY",
-                "NATIONWIDE, USA",
-                "Children with completely black eyes are said to appear unexpectedly and ask to be let inside.",
-                "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
-                System.currentTimeMillis()
-        ));
-
-        allLegends.add(new Legend(
-                "2",
-                "Bloody Bride",
-                "GHOST",
-                "BUDAPEST, HUNGARY",
-                "A ghostly bride is said to wander near an old road at night.",
-                "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
-                System.currentTimeMillis() - 100000
-        ));
-
-        allLegends.add(new Legend(
-                "3",
-                "Tunnel Shadow",
-                "PARANORMAL",
-                "SZEGED, HUNGARY",
-                "People report hearing footsteps and seeing moving shadows in the tunnel.",
-                "https://images.unsplash.com/photo-1511497584788-876760111969",
-                System.currentTimeMillis() - 200000
-        ));
+        updateSortButtons();
     }
 
     private void applyFilter(String query) {
@@ -188,11 +163,17 @@ public class LegendListFragment extends Fragment {
     private void sortCurrentList() {
         switch (currentSortMode) {
             case AZ:
-                filteredLegends.sort(Comparator.comparing(Legend::getTitle, String.CASE_INSENSITIVE_ORDER));
+                filteredLegends.sort(Comparator.comparing(
+                        Legend::getTitle,
+                        String.CASE_INSENSITIVE_ORDER
+                ));
                 break;
 
             case CATEGORY:
-                filteredLegends.sort(Comparator.comparing(Legend::getCategory, String.CASE_INSENSITIVE_ORDER));
+                filteredLegends.sort(Comparator.comparing(
+                        Legend::getCategory,
+                        String.CASE_INSENSITIVE_ORDER
+                ));
                 break;
 
             case RECENT:

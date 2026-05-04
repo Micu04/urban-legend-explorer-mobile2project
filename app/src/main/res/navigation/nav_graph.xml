@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/legendListFragment">
+
+    <fragment
+        android:id="@+id/legendListFragment"
+        android:name="com.example.urbanlegendexplorer.fragments.LegendListFragment"
+        android:label="Urban Legends">
+        <action
+            android:id="@+id/action_legendListFragment_to_legendDetailFragment"
+            app:destination="@id/legendDetailFragment" />
+        <action
+            android:id="@+id/action_legendListFragment_to_addEditLegendFragment"
+            app:destination="@id/addEditLegendFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/legendDetailFragment"
+        android:name="com.example.urbanlegendexplorer.fragments.LegendDetailFragment"
+        android:label="Legend Detail">
+        <action
+            android:id="@+id/action_legendDetailFragment_to_addEditLegendFragment"
+            app:destination="@id/addEditLegendFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addEditLegendFragment"
+        android:name="com.example.urbanlegendexplorer.fragments.AddEditLegendFragment"
+        android:label="Add/Edit Legend" />
+
+</navigation>

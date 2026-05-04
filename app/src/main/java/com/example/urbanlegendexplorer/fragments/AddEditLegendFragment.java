@@ -5,30 +5,36 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import com.example.urbanlegendexplorer.R;
+import com.example.urbanlegendexplorer.model.Legend;
+import com.example.urbanlegendexplorer.model.LegendCategory;
+import com.example.urbanlegendexplorer.viewmodel.LegendViewModel;
+
+import java.util.UUID;
 
 public class AddEditLegendFragment extends Fragment {
 
-    private ImageButton buttonBack;
-    private TextView textScreenTitle;
-    private EditText editTitle;
-    private EditText editCategory;
-    private EditText editLocation;
-    private EditText editImageUrl;
-    private EditText editDescription;
-    private Button buttonSaveLegend;
+    private EditText editTitle, editLocation, editDescription, editImageUrl;
+    private Spinner spinnerCategory;
+    private Button buttonSave;
+    private ImageButton buttonBackAddEdit;
 
-    private boolean isEditMode = false;
+    private LegendViewModel legendViewModel;
+    private String legendId = null;
+    private long createdAt = 0L;
 
     public AddEditLegendFragment() {
     }
@@ -42,65 +48,110 @@ public class AddEditLegendFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        buttonBack = view.findViewById(R.id.buttonBackAddEdit);
-        textScreenTitle = view.findViewById(R.id.textScreenTitle);
         editTitle = view.findViewById(R.id.editTitle);
-        editCategory = view.findViewById(R.id.editCategory);
         editLocation = view.findViewById(R.id.editLocation);
-        editImageUrl = view.findViewById(R.id.editImageUrl);
         editDescription = view.findViewById(R.id.editDescription);
-        buttonSaveLegend = view.findViewById(R.id.buttonSaveLegend);
+        editImageUrl = view.findViewById(R.id.editImageUrl);
+        spinnerCategory = view.findViewById(R.id.spinnerCategory);
+        buttonSave = view.findViewById(R.id.buttonSave);
+        buttonBackAddEdit = view.findViewById(R.id.buttonBackAddEdit);
 
-        buttonBack.setOnClickListener(v ->
-                requireActivity().getOnBackPressedDispatcher().onBackPressed()
+        legendViewModel = new ViewModelProvider(requireActivity()).get(LegendViewModel.class);
+
+        setupSpinner();
+        loadIfEditing();
+
+        buttonBackAddEdit.setOnClickListener(v ->
+                Navigation.findNavController(view).navigateUp()
         );
 
-        Bundle args = getArguments();
-        if (args != null && !args.isEmpty()) {
-            isEditMode = true;
-
-            editTitle.setText(args.getString("title", ""));
-            editCategory.setText(args.getString("category", ""));
-            editLocation.setText(args.getString("location", ""));
-            editImageUrl.setText(args.getString("imageUrl", ""));
-            editDescription.setText(args.getString("description", ""));
-
-            textScreenTitle.setText("EDIT LEGEND");
-            buttonSaveLegend.setText("UPDATE LEGEND");
-        } else {
-            textScreenTitle.setText("ADD LEGEND");
-            buttonSaveLegend.setText("SAVE LEGEND");
-        }
-
-        buttonSaveLegend.setOnClickListener(v -> saveLegend());
+        buttonSave.setOnClickListener(v -> saveLegend(view));
     }
 
-    private void saveLegend() {
-        String title = editTitle.getText().toString().trim();
-        String category = editCategory.getText().toString().trim();
-        String location = editLocation.getText().toString().trim();
-        String imageUrl = editImageUrl.getText().toString().trim();
-        String description = editDescription.getText().toString().trim();
+    private void setupSpinner() {
+        ArrayAdapter<LegendCategory> adapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
+                LegendCategory.values()
+        );
 
-        if (TextUtils.isEmpty(title) || TextUtils.isEmpty(description)) {
-            Toast.makeText(requireContext(), "Title and description are required", Toast.LENGTH_SHORT).show();
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCategory.setAdapter(adapter);
+    }
+
+    private void loadIfEditing() {
+        Bundle args = getArguments();
+
+        if (args == null) {
             return;
         }
 
-        if (TextUtils.isEmpty(category)) {
-            category = "UNKNOWN";
+        legendId = args.getString("legendId", null);
+
+        if (legendId == null) {
+            return;
         }
 
-        if (TextUtils.isEmpty(location)) {
-            location = "UNKNOWN LOCATION";
+        createdAt = args.getLong("createdAt", System.currentTimeMillis());
+
+        editTitle.setText(args.getString("title", ""));
+        editLocation.setText(args.getString("location", ""));
+        editDescription.setText(args.getString("description", ""));
+        editImageUrl.setText(args.getString("imageUrl", ""));
+
+        String categoryString = args.getString("category", LegendCategory.OTHER.name());
+
+        try {
+            LegendCategory category = LegendCategory.valueOf(categoryString);
+            spinnerCategory.setSelection(category.ordinal());
+        } catch (IllegalArgumentException e) {
+            spinnerCategory.setSelection(LegendCategory.OTHER.ordinal());
+        }
+    }
+
+    private void saveLegend(View view) {
+        String title = editTitle.getText().toString().trim();
+        String location = editLocation.getText().toString().trim();
+        String description = editDescription.getText().toString().trim();
+        String imageUrl = editImageUrl.getText().toString().trim();
+        LegendCategory category = (LegendCategory) spinnerCategory.getSelectedItem();
+
+        if (TextUtils.isEmpty(title) || TextUtils.isEmpty(description)) {
+            Toast.makeText(requireContext(), "Title and Description required!", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        if (isEditMode) {
-            Toast.makeText(requireContext(), "Legend updated locally", Toast.LENGTH_SHORT).show();
+        if (legendId == null) {
+            legendId = UUID.randomUUID().toString();
+            createdAt = System.currentTimeMillis();
+
+            Legend newLegend = new Legend(
+                    legendId,
+                    title,
+                    category,
+                    location,
+                    description,
+                    imageUrl,
+                    createdAt
+            );
+
+            legendViewModel.insert(newLegend);
+            Toast.makeText(requireContext(), "Legend saved!", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(requireContext(), "Legend saved locally", Toast.LENGTH_SHORT).show();
+            Legend updatedLegend = new Legend(
+                    legendId,
+                    title,
+                    category,
+                    location,
+                    description,
+                    imageUrl,
+                    createdAt
+            );
+
+            legendViewModel.update(updatedLegend);
+            Toast.makeText(requireContext(), "Legend updated!", Toast.LENGTH_SHORT).show();
         }
 
-        requireActivity().getOnBackPressedDispatcher().onBackPressed();
+        Navigation.findNavController(view).navigateUp();
     }
 }

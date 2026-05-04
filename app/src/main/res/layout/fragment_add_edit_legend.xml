@@ -42,17 +42,13 @@
             android:textColor="#FFFFFF"
             android:textColorHint="#7A7A7A" />
 
-        <EditText
-            android:id="@+id/editCategory"
+        <!-- ✅ EZ LETT JAVÍTVA -->
+        <Spinner
+            android:id="@+id/spinnerCategory"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginBottom="12dp"
-            android:background="#111111"
-            android:hint="Category"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#7A7A7A" />
+            android:background="#111111" />
 
         <EditText
             android:id="@+id/editLocation"
@@ -91,7 +87,7 @@
             android:textColorHint="#7A7A7A" />
 
         <Button
-            android:id="@+id/buttonSaveLegend"
+            android:id="@+id/buttonSave"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:backgroundTint="#F2F2F2"

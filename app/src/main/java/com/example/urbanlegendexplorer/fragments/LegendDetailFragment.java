@@ -1,7 +1,6 @@
 package com.example.urbanlegendexplorer.fragments;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,22 +13,28 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 import com.example.urbanlegendexplorer.R;
+import com.example.urbanlegendexplorer.model.Legend;
+import com.example.urbanlegendexplorer.model.LegendCategory;
+import com.example.urbanlegendexplorer.viewmodel.LegendViewModel;
 
 public class LegendDetailFragment extends Fragment {
 
-    private ImageButton buttonBack;
     private ImageView imageLegendDetail;
-    private TextView textDetailCategory;
     private TextView textDetailTitle;
+    private TextView textDetailCategory;
     private TextView textDetailLocation;
     private TextView textDetailDescription;
+    private ImageButton buttonBack;
     private Button buttonEdit;
     private Button buttonDelete;
 
-    private String currentImageUrl = "";
+    private LegendViewModel legendViewModel;
+    private Legend currentLegend;
 
     public LegendDetailFragment() {
     }
@@ -43,63 +48,104 @@ public class LegendDetailFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        buttonBack = view.findViewById(R.id.buttonBackDetail);
         imageLegendDetail = view.findViewById(R.id.imageLegendDetail);
-        textDetailCategory = view.findViewById(R.id.textDetailCategory);
         textDetailTitle = view.findViewById(R.id.textDetailTitle);
+        textDetailCategory = view.findViewById(R.id.textDetailCategory);
         textDetailLocation = view.findViewById(R.id.textDetailLocation);
         textDetailDescription = view.findViewById(R.id.textDetailDescription);
+        buttonBack = view.findViewById(R.id.buttonBackDetail);
         buttonEdit = view.findViewById(R.id.buttonEdit);
         buttonDelete = view.findViewById(R.id.buttonDelete);
 
+        legendViewModel = new ViewModelProvider(requireActivity()).get(LegendViewModel.class);
+
+        readLegendFromArguments();
+        bindData();
+
         buttonBack.setOnClickListener(v ->
-                requireActivity().getOnBackPressedDispatcher().onBackPressed()
+                Navigation.findNavController(view).navigateUp()
         );
 
-        Bundle args = getArguments();
-        if (args != null) {
-            String title = args.getString("title", "");
-            String category = args.getString("category", "");
-            String location = args.getString("location", "");
-            String description = args.getString("description", "");
-            String imageUrl = args.getString("imageUrl", "");
-
-            currentImageUrl = imageUrl;
-
-            textDetailTitle.setText(title);
-            textDetailCategory.setText(category);
-            textDetailLocation.setText(location);
-            textDetailDescription.setText(description);
-
-            if (!TextUtils.isEmpty(imageUrl)) {
-                Glide.with(requireContext())
-                        .load(imageUrl)
-                        .placeholder(android.R.color.darker_gray)
-                        .into(imageLegendDetail);
-            }
-        }
-
         buttonEdit.setOnClickListener(v -> {
+            if (currentLegend == null) {
+                Toast.makeText(requireContext(), "Legend not loaded yet!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             Bundle bundle = new Bundle();
-            bundle.putString("title", textDetailTitle.getText().toString());
-            bundle.putString("category", textDetailCategory.getText().toString());
-            bundle.putString("location", textDetailLocation.getText().toString());
-            bundle.putString("description", textDetailDescription.getText().toString());
-            bundle.putString("imageUrl", currentImageUrl);
+            bundle.putString("legendId", currentLegend.getId());
+            bundle.putString("title", currentLegend.getTitle());
+            bundle.putString("category", currentLegend.getCategory());
+            bundle.putString("location", currentLegend.getLocation());
+            bundle.putString("description", currentLegend.getDescription());
+            bundle.putString("imageUrl", currentLegend.getImageUrl());
+            bundle.putLong("createdAt", currentLegend.getCreatedAt());
 
-            AddEditLegendFragment fragment = new AddEditLegendFragment();
-            fragment.setArguments(bundle);
-
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .addToBackStack(null)
-                    .commit();
+            Navigation.findNavController(view)
+                    .navigate(R.id.action_legendDetailFragment_to_addEditLegendFragment, bundle);
         });
 
         buttonDelete.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "Legend deleted locally", Toast.LENGTH_SHORT).show();
-            requireActivity().getOnBackPressedDispatcher().onBackPressed();
+            if (currentLegend == null) {
+                Toast.makeText(requireContext(), "Legend not loaded yet!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            legendViewModel.delete(currentLegend);
+            Toast.makeText(requireContext(), "Legend deleted!", Toast.LENGTH_SHORT).show();
+            Navigation.findNavController(view).navigateUp();
         });
+    }
+
+    private void readLegendFromArguments() {
+        Bundle args = getArguments();
+
+        if (args == null) {
+            currentLegend = null;
+            return;
+        }
+
+        String id = args.getString("legendId", "");
+        String title = args.getString("title", "");
+        String categoryString = args.getString("category", LegendCategory.OTHER.name());
+        String location = args.getString("location", "");
+        String description = args.getString("description", "");
+        String imageUrl = args.getString("imageUrl", "");
+        long createdAt = args.getLong("createdAt", System.currentTimeMillis());
+
+        LegendCategory category;
+
+        try {
+            category = LegendCategory.valueOf(categoryString);
+        } catch (IllegalArgumentException e) {
+            category = LegendCategory.OTHER;
+        }
+
+        currentLegend = new Legend(
+                id,
+                title,
+                category,
+                location,
+                description,
+                imageUrl,
+                createdAt
+        );
+    }
+
+    private void bindData() {
+        if (currentLegend == null) {
+            return;
+        }
+
+        textDetailTitle.setText(currentLegend.getTitle());
+        textDetailCategory.setText(currentLegend.getCategory());
+        textDetailLocation.setText(currentLegend.getLocation());
+        textDetailDescription.setText(currentLegend.getDescription());
+
+        Glide.with(requireContext())
+                .load(currentLegend.getImageUrl())
+                .placeholder(R.drawable.ic_launcher_background)
+                .error(R.drawable.ic_launcher_background)
+                .into(imageLegendDetail);
     }
 }
