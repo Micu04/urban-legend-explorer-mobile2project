@@ -67,3 +67,7 @@ Főbb képernyők:
 - meglévő legenda módosítása
 - legenda törlése
 - képek betöltése Glide segítségével
+
+string h tipus
+fiish
+navigation controer
