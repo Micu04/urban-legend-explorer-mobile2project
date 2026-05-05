@@ -61,7 +61,7 @@ Főbb képernyők:
 - keresési és rendezési funkciók implementálása
 
 ### Ölvödi Soma
-- Room adatbázis implementálása
+- FireBase adatbázis implementálása
 - legenda részletes nézet elkészítése
 - új legenda létrehozása
 - meglévő legenda módosítása
